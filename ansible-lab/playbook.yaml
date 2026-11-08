@@ -1,0 +1,12 @@
+---
+- name: Prepare servers
+  hosts: production
+  become: true
+  roles:
+    - docker
+
+- name: Deploy Inception
+  hosts: production
+  become: true
+  roles:
+    - inception

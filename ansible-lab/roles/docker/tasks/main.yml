@@ -1,0 +1,36 @@
+---
+- name: Install Docker and Docker Compose
+  ansible.builtin.apt:
+    update_cache: true
+    name:
+      - docker.io
+      - docker-compose-v2
+      - ufw
+    state: present
+
+- name: Start Docker and enable it at boot
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Set the default inbound firewall policy
+  ansible.builtin.command: ufw default deny incoming
+  changed_when: false
+
+- name: Allow outbound traffic through the firewall
+  ansible.builtin.command: ufw default allow outgoing
+  changed_when: false
+
+- name: Allow SSH and web traffic through the firewall
+  ansible.builtin.command: "ufw allow {{ item }}/tcp"
+  loop:
+    - "22"
+    - "80"
+    - "443"
+  register: ufw_allowed_ports
+  changed_when: "'Skipping adding existing rule' not in ufw_allowed_ports.stdout"
+
+- name: Enable the firewall
+  ansible.builtin.command: ufw --force enable
+  changed_when: false

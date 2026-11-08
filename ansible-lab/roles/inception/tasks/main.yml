@@ -1,0 +1,31 @@
+---
+- name: Create persistent data directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - /opt/inception/data/wordpress
+    - /opt/inception/data/database
+
+- name: Create application directory
+  ansible.builtin.file:
+    path: /opt/inception/source
+    state: directory
+    mode: "0755"
+
+- name: Copy application source without local secrets
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/source/"
+    dest: /opt/inception/source/
+
+- name: Create application environment file from vaulted variables
+  ansible.builtin.template:
+    src: env.j2
+    dest: /opt/inception/source/.env
+    mode: "0600"
+
+- name: Start application
+  ansible.builtin.command: docker compose up --detach --build
+  args:
+    chdir: /opt/inception/source
