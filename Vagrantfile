@@ -7,7 +7,8 @@ Vagrant.configure("2") do |config|
     managed.vm.hostname = "managed-node"
 
     managed.vm.network "private_network", ip: "192.168.56.10"
-    managed.vm.network "forwarded_port", guest: 80, host: 9090
+    managed.vm.network "forwarded_port", guest: 80, host: 9090   # wp
+    managed.vm.network "forwarded_port", guest: 8080, host: 9091 # Adminer
 
     managed.vm.provider "virtualbox" do |vb|
       vb.name = "managed-node"
