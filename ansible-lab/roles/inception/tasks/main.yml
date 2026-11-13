@@ -25,7 +25,7 @@
     dest: /opt/inception/source/.env
     mode: "0600"
 
-- name: Start application
-  ansible.builtin.command: docker compose up --detach --build
-  args:
-    chdir: /opt/inception/source
+- name: Start application if not already running
+  community.docker.docker_compose_v2:
+    project_src: /opt/inception/source
+    state: present

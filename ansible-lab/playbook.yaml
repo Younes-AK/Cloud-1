@@ -10,3 +10,9 @@
   become: true
   roles:
     - inception
+
+- name: Ufw configuration
+  hosts: production
+  become: true
+  roles:
+    - firewall

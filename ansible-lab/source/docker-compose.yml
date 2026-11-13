@@ -10,6 +10,7 @@ services:
       - wordpress:/var/www/wp:ro
     depends_on:
       - wordpress
+      - phpmyadmin
     restart: unless-stopped
     networks:
       - inception
@@ -36,14 +37,19 @@ services:
     networks:
       - inception
   
-  adminer:
-    container_name: adminer
-    build: ./requirements/bonus/adminer
-    restart: on-failure
-    ports:
-      - "8080:8080"
+  phpmyadmin:
+    image: phpmyadmin:5-apache
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      PMA_PORT: 3306
+      PMA_ABSOLUTE_URI: https://${DOMAIN_NAME}/phpmyadmin/
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      - mariadb
     networks:
       - inception
+    restart: always
 
 volumes:
   wordpress:
